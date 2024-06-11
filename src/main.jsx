@@ -21,12 +21,6 @@ import {
 } from "react-router-dom";
 import Home from './home/home.jsx';
 
-// Import dotenv ici
-import 'dotenv/config';
-
-// Supprimer cette ligne, car vous avez déjà importé dotenv ci-dessus
-// require('dotenv').config();
-
 const router = createBrowserRouter([
   {
     path: "/",
