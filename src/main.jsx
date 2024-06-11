@@ -11,12 +11,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 
 //fonts & icons
-
 import '././assets/css/icofont.min.css';
 import '././assets/css/animate.css';
 import '././assets/css/style.min.css';
-
-
 
 import {
   createBrowserRouter,
@@ -24,12 +21,19 @@ import {
 } from "react-router-dom";
 import Home from './home/home.jsx';
 
+// Import dotenv ici
+import 'dotenv/config';
+
+// Supprimer cette ligne, car vous avez déjà importé dotenv ci-dessus
+// require('dotenv').config();
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App/>,
     children:[
-      {path:"/",
+      {
+        path:"/",
         element:<Home/>
       }
     ]
