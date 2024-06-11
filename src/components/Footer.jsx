@@ -21,9 +21,9 @@ const Footer = () => {
             <div className="col-md-6 col-xl-3 col-sm-12 mb-4 mb-md-0">
               <h5 className="pb-3"><i className="fa-solid fa-location-dot pe-1"></i> Our location</h5>
               <span className="text-secondary">
-                Milannagar bazar<br />
-                Tamluk, East Medinipore, West Bengal<br />
-                720001, India<br />
+                Tangier<br />
+                z.i ghzenaya lot 115-117-119 <br />
+                90000, Maroc<br />
               </span>
             </div>
             <div className="col-md-6 col-xl-3 col-sm-12">
