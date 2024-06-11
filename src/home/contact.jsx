@@ -1,7 +1,67 @@
-import React from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
+import emailjs from 'emailjs-com';
 
 const Contact = () => {
+  const [formState, setFormState] = useState({
+    Prenom: '',
+    Nom: '',
+    raisonSocial: '',
+    email: '',
+    phone: '',
+    country: 'maroc', // Initialiser avec "maroc"
+    objet: '',
+    message: '',
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState(null);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+
+    // Si le champ est "phone", valider les entrées pour ne permettre que les chiffres
+    if (id === 'phone') {
+      const onlyNums = value.replace(/[^0-9]/g, '');
+      setFormState({ ...formState, [id]: onlyNums });
+    } else {
+      setFormState({ ...formState, [id]: value });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!formState.Prenom || !formState.Nom || !formState.email || !formState.phone || !formState.country || !formState.objet || !formState.message) {
+      setAlert({ type: 'danger', message: 'Veuillez remplir tous les champs obligatoires.' });
+      return;
+    }
+
+    setLoading(true);
+    emailjs.send(
+      process.env.REACT_APP_EMAILJS_SERVICE_ID,
+      process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+      formState,
+      process.env.REACT_APP_EMAILJS_USER_ID
+    ).then((response) => {
+      setLoading(false);
+      setAlert({ type: 'success', message: 'Votre message a été envoyé avec succès.' });
+      setFormState({
+        Prenom: '',
+        Nom: '',
+        raisonSocial: '',
+        email: '',
+        phone: '',
+        country: 'maroc', // Réinitialiser avec "maroc"
+        objet: '',
+        message: '',
+      });
+    }).catch((err) => {
+      setLoading(false);
+      setAlert({ type: 'danger', message: 'Une erreur est survenue. Veuillez réessayer.' });
+    });
+  };
+
   return (
     <>
       <section className="mt-5" id='contact'>
@@ -50,7 +110,7 @@ const Contact = () => {
                       <i className="fa-solid fa-location-pin h3 pe-2"></i>
                       <span className="h5">Office location</span>
                     </div>
-                    <span>Morroco</span>
+                    <span>Maroc</span>
                   </div>
                 </div>
               </div>
@@ -62,40 +122,57 @@ const Contact = () => {
             </Col>
             <Col xl={6} lg={6} md={12}>
               <h2 className="pb-4">Envoyer Un Message</h2>
-              <Row className="g-4">
-                <Col xs={12} md={6} mb={3}>
-                  <Form.Group controlId="firstName">
-                    <Form.Label>Prenom</Form.Label>
-                    <Form.Control type="text" placeholder="Entrer Votre Prenom" />
-                  </Form.Group>
-                </Col>
-                <Col xs={12} md={6} mb={3}>
-                  <Form.Group controlId="lastName">
-                    <Form.Label>Nom</Form.Label>
-                    <Form.Control type="text" placeholder="Entrer Votre Nom" />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Form.Group controlId="email" className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type="email" placeholder="name@example.com" />
-              </Form.Group>
-              <Form.Group controlId="phone" className="mb-3">
-                <Form.Label>Phone</Form.Label>
-                <Form.Control type="tel" placeholder="+2124567890" />
-              </Form.Group>
-              <Form.Group controlId="country" className="mb-3">
-                <Form.Label>Pays</Form.Label>
-                <Form.Select aria-label="Select country">
-                  <option value="1">Maroc</option>
-                  <option value="2">Autre</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group controlId="message" className="mb-3">
-                <Form.Label>Message</Form.Label>
-                <Form.Control as="textarea" rows={3} />
-              </Form.Group>
-              <Button variant="dark" type="submit">Envoyer Le Message</Button>
+              <Form onSubmit={handleSubmit}>
+                {alert && (
+                  <Alert variant={alert.type}>
+                    {alert.message}
+                  </Alert>
+                )}
+                <Row className="g-4">
+                  <Col xs={12} md={6} mb={3}>
+                    <Form.Group controlId="Prenom">
+                      <Form.Label>Prenom</Form.Label>
+                      <Form.Control type="text" placeholder="Entrer Votre Prenom" value={formState.Prenom} onChange={handleChange} required />
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12} md={6} mb={3}>
+                    <Form.Group controlId="Nom">
+                      <Form.Label>Nom</Form.Label>
+                      <Form.Control type="text" placeholder="Entrer Votre Nom" value={formState.Nom} onChange={handleChange} required />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Form.Group controlId="raisonSocial" className="mt-3 mb-3">
+                  <Form.Label>Raison Social</Form.Label>
+                  <Form.Control type="text" placeholder="Raison Sociale" value={formState.raisonSocial} onChange={handleChange} />
+                </Form.Group>
+                <Form.Group controlId="email" className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="email" placeholder="name@example.com" value={formState.email} onChange={handleChange} required />
+                </Form.Group>
+                <Form.Group controlId="phone" className="mb-3">
+                  <Form.Label>Phone</Form.Label>
+                  <Form.Control type="tel" placeholder="+2124567890" value={formState.phone} onChange={handleChange} required />
+                </Form.Group>
+                <Form.Group controlId="country" className="mb-3">
+                  <Form.Label>Pays</Form.Label>
+                  <Form.Select aria-label="Select country" value={formState.country} onChange={handleChange}>
+                    <option value="maroc">Maroc</option>
+                    <option value="autre">Autre</option>
+                  </Form.Select>
+                </Form.Group>
+                <Form.Group controlId="objet" className="mb-3">
+                  <Form.Label>Objet</Form.Label>
+                  <Form.Control type="text" placeholder="Objet" value={formState.objet} onChange={handleChange} required />
+                </Form.Group>
+                <Form.Group controlId="message" className="mb-3">
+                  <Form.Label>Message</Form.Label>
+                  <Form.Control as="textarea" rows={3} value={formState.message} onChange={handleChange} required />
+                </Form.Group>
+                <Button variant="dark" type="submit" disabled={loading}>
+                  {loading ? <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" /> : 'Envoyer Le Message'}
+                </Button>
+              </Form>
             </Col>
           </Row>
         </Container>
