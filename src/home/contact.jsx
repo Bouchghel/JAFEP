@@ -19,7 +19,7 @@ const Contact = () => {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-
+    
     // Si le champ est "phone", valider les entrées pour ne permettre que les chiffres
     if (id === 'phone') {
       const onlyNums = value.replace(/[^0-9]/g, '');
@@ -39,10 +39,10 @@ const Contact = () => {
 
     setLoading(true);
     emailjs.send(
-      process.env.REACT_APP_EMAILJS_SERVICE_ID,
-      process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
+      'service_b02tomj',
+      'template_knr6p3o',
       formState,
-      process.env.REACT_APP_EMAILJS_USER_ID
+      '5att7LUISUuUE2LqF'
     ).then((response) => {
       setLoading(false);
       setAlert({ type: 'success', message: 'Votre message a été envoyé avec succès.' });
